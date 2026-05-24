@@ -1,33 +1,35 @@
 // profiles.h - N642USB App Profiles
 //
-// Profile definitions for N64 to USB adapter.
+// Profile definitions for N64 to USB adapter (Xbox 360 Custom Layout)
 
 #ifndef N642USB_PROFILES_H
 #define N642USB_PROFILES_H
 
 #include "core/services/profiles/profile.h"
+#include "core/buttons.h" // Garante o acesso às definições corretas de botões do Joypad OS
 
 // ============================================================================
-// PROFILE 1: DEFAULT (DC-style face buttons)
+// PROFILE: XBOX 360 CUSTOM MAPPING
 // ============================================================================
-// A=B1, C-Down=B2, B=B3, C-Left=B4, C-Up=L3, C-Right=R3
-// C-buttons also map to right stick
+// Mapeamento desejado:
+// N64 A -> Xbox A (JOYPAD_BUTTON_A)
+// N64 B -> Xbox X (JOYPAD_BUTTON_X)
+// N64 Z -> Xbox R1/RB (JOYPAD_BUTTON_R1)
+// N64 L/R -> Gatilhos L2/R2 (Tratados automaticamente no trigger_mode)
+// Botões C -> Apenas Analógico Direito (Desativados como botões digitais)
 
-// No remapping needed - use core defaults
+static const button_map_entry_t n642usb_xbox_map[] = {
+    // Botões Principais
+    MAP_BUTTON(JOYPAD_BUTTON_A,  JOYPAD_BUTTON_A),  // N64 A -> Xbox A
+    MAP_BUTTON(JOYPAD_BUTTON_B,  JOYPAD_BUTTON_X),  // N64 B -> Xbox X
+    MAP_BUTTON(JOYPAD_BUTTON_Z,  JOYPAD_BUTTON_R1), // N64 Z -> Xbox R1 (RB)
 
-// ============================================================================
-// PROFILE 2: DUAL STICK (C-buttons as right stick only)
-// ============================================================================
-// A=B1, B=B2, C-buttons=right stick only (no button output)
-
-static const button_map_entry_t n642usb_dualstick_map[] = {
-    // N64 B (B3) -> USB B (B2)
-    MAP_BUTTON(JP_BUTTON_B3, JP_BUTTON_B2),
-    // Remove C-button mappings (they still control right stick via analog)
-    MAP_BUTTON(JP_BUTTON_B2, 0),   // C-Down -> nothing
-    MAP_BUTTON(JP_BUTTON_B4, 0),   // C-Left -> nothing
-    MAP_BUTTON(JP_BUTTON_L3, 0),   // C-Up -> nothing
-    MAP_BUTTON(JP_BUTTON_R3, 0),   // C-Right -> nothing
+    // Desativa os botões C como botões comuns de face para não darem duplo comando,
+    // já que o sistema nativamente já os converte para o Analógico Direito.
+    MAP_BUTTON(JOYPAD_BUTTON_C_DOWN,  0), 
+    MAP_BUTTON(JOYPAD_BUTTON_C_LEFT,  0), 
+    MAP_BUTTON(JOYPAD_BUTTON_C_UP,    0), 
+    MAP_BUTTON(JOYPAD_BUTTON_C_RIGHT, 0), 
 };
 
 // ============================================================================
@@ -35,27 +37,16 @@ static const button_map_entry_t n642usb_dualstick_map[] = {
 // ============================================================================
 
 static const profile_t n642usb_profiles[] = {
-    // Profile 0: Default (DC-style)
+    // Perfil 0: customizado para o layout Xbox 360 que você pediu
     {
-        .name = "default",
-        .description = "DC-style: A/B/C-Down/C-Left as face buttons",
-        .button_map = NULL,
-        .button_map_count = 0,
+        .name = "xbox_layout",
+        .description = "N64 para Xbox 360 customizado",
+        .button_map = n642usb_xbox_map,
+        .button_map_count = sizeof(n642usb_xbox_map) / sizeof(n642usb_xbox_map[0]),
         .combo_map = NULL,
         .combo_map_count = 0,
-        PROFILE_TRIGGERS_DEFAULT,
-        PROFILE_ANALOG_DEFAULT,
-        .adaptive_triggers = false,
-    },
-    // Profile 1: Dual Stick
-    {
-        .name = "dualstick",
-        .description = "Dual stick: A/B as face, C-pad as right stick",
-        .button_map = n642usb_dualstick_map,
-        .button_map_count = sizeof(n642usb_dualstick_map) / sizeof(n642usb_dualstick_map[0]),
-        .combo_map = NULL,
-        .combo_map_count = 0,
-        PROFILE_TRIGGERS_DEFAULT,
+        // Faz com que os botões digitais L e R do N64 virem os gatilhos analógicos L2/R2 do Xbox
+        .trigger_mode = PROFILE_TRIGGER_MODE_DIGITAL_TO_ANALOG, 
         PROFILE_ANALOG_DEFAULT,
         .adaptive_triggers = false,
     },
@@ -68,7 +59,7 @@ static const profile_t n642usb_profiles[] = {
 static const profile_set_t n642usb_profile_set = {
     .profiles = n642usb_profiles,
     .profile_count = sizeof(n642usb_profiles) / sizeof(n642usb_profiles[0]),
-    .default_index = 0,
+    .default_index = 0, // Inicia direto nesse perfil modificado
 };
 
 #endif // N642USB_PROFILES_H
