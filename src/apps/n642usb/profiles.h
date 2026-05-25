@@ -10,20 +10,19 @@
 // ============================================================================
 // PROFILE: XBOX 360 CUSTOM MAPPING
 // ============================================================================
-// Mapeamento corrigido usando os nomes internos do Joypad OS para N64:
+// Mapeamento corrigido com nomenclatura interna do Joypad OS:
 // N64 A (JP_BUTTON_B1) -> Xbox A (JP_BUTTON_B1)
 // N64 B (JP_BUTTON_B3) -> Xbox X (JP_BUTTON_B3)
-// N64 Z (JP_BUTTON_Z)  -> Xbox R1 (JP_BUTTON_R1)
-// Botões C             -> Desativados como botões comuns (evita duplo comando)
+// N64 Z (JP_BUTTON_L2) -> Xbox R1 (JP_BUTTON_R1)
+// Botões C             -> Desativados como botões digitais (atuam só no analógico)
 
 static const button_map_entry_t n642usb_xbox_map[] = {
     // Botões Principais
     MAP_BUTTON(JP_BUTTON_B1, JP_BUTTON_B1),  // N64 A -> Xbox A
     MAP_BUTTON(JP_BUTTON_B3, JP_BUTTON_B3),  // N64 B -> Xbox X
-    MAP_BUTTON(JP_BUTTON_Z,  JP_BUTTON_R1),  // N64 Z -> Xbox R1 (RB)
+    MAP_BUTTON(JP_BUTTON_L2, JP_BUTTON_R1),  // N64 Z (L2 interno) -> Xbox R1 (RB)
 
-    // Remove os botões C da lista de botões digitais normais, 
-    // assim eles atuam puramente como o analógico direito do Xbox.
+    // Desativa os botões C como botões digitais para evitar duplo comando
     MAP_BUTTON(JP_BUTTON_B2, 0),   // C-Down -> nada
     MAP_BUTTON(JP_BUTTON_B4, 0),   // C-Left -> nada
     MAP_BUTTON(JP_BUTTON_L3, 0),   // C-Up -> nada
@@ -43,8 +42,8 @@ static const profile_t n642usb_profiles[] = {
         .button_map_count = sizeof(n642usb_xbox_map) / sizeof(n642usb_xbox_map[0]),
         .combo_map = NULL,
         .combo_map_count = 0,
-        PROFILE_TRIGGERS_DEFAULT, // Usa a conversão padrão de L/R para os Gatilhos L2/R2
-        PROFILE_ANALOG_DEFAULT,   // Mantém os analógicos e os botões C no analógico direito
+        PROFILE_TRIGGERS_DEFAULT, // Conversão de L/R para gatilhos analógicos
+        PROFILE_ANALOG_DEFAULT,   // Mantém o analógico principal e o analógico C funcionando
         .adaptive_triggers = false,
     },
 };
